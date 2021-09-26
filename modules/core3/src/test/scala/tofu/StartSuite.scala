@@ -11,14 +11,12 @@ import tofu.concurrent.{MakeAgent, MakeSerialAgent}
 object StartSuite {
   def summonInstancesForConcurrent[F[_]: Concurrent] = {
     Fire[F]
-    Start[F]
     Race[F]
     MakeAgent[IO, IO]
   }
 
   def summonInstancesForIO = {
     Fire[IO]
-    Start[IO]
     Race[IO]
     MakeAgent[IO, IO]
     MakeSerialAgent[IO, IO]

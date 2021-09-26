@@ -1,4 +1,4 @@
-package tofu
+package tofu.syntax
 
 import cats.effect.{Async, Concurrent, ConcurrentEffect, Effect}
 import tofu.lift.Unlift

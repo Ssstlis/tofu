@@ -13,13 +13,11 @@ import tofu.syntax.monadic._
 object StartSuite {
   def summonInstancesForConcurrent[F[_]: Concurrent] = {
     Fire[F]
-    Start[F]
     Race[F]
   }
 
   def summonInstancesForIO(implicit cs: ContextShift[IO]) = {
     Fire[IO]
-    Start[IO]
     Race[IO]
     MakeAgent[IO, IO]
     MakeSerialAgent[IO, IO]

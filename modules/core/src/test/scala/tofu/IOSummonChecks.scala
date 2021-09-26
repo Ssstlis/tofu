@@ -1,16 +1,19 @@
 package tofu
 
 import cats.data.ReaderT
-import cats.effect.{ContextShift, IO}
+import cats.effect.{Concurrent, ContextShift, IO}
 
-class IOSummonChecks(implicit cs: ContextShift[IO]) {
-  implicitly[Fire[IO[*]]]
-  implicitly[Start[IO[*]]]
-  implicitly[Race[IO[*]]]
-  implicitly[Errors[IO, Throwable]]
+import scala.annotation.nowarn
 
-  implicitly[Fire[ReaderT[IO, Unit, *]]]
-  implicitly[Start[ReaderT[IO, Unit, *]]]
-  implicitly[Race[ReaderT[IO, Unit, *]]]
-  implicitly[Errors[ReaderT[IO, Unit, *], Throwable]]
+@nowarn("cat=unused-params")
+class IOSummonChecks {
+  def summonForIO(implicit cs: ContextShift[IO]) = {
+    implicitly[Start[IO[*]]]
+    implicitly[Start[ReaderT[IO, Unit, *]]]
+  }
+
+  def summonInstancesForConcurrent[F[_]: Concurrent] = {
+    implicitly[Start[F]]
+    implicitly[Start[ReaderT[F, Unit, *]]]
+  }
 }

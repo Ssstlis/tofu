@@ -28,7 +28,7 @@ object RepK {
   }
 }
 
-@typeclass @nowarn("cat=unused-imports")
+//@typeclass @nowarn("cat=unused-imports")
 trait RepresentableK[U[_[_]]] extends MonoidalK[U] with Embed[U] {
   import RepresentableK.Tab
   def tabulate[F[_]](hom: RepK[U, *] ~> F): U[F]

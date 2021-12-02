@@ -15,3 +15,4 @@ website/static/api
 .bsp
 *.db
 .jvmopts
+**.DS_Store

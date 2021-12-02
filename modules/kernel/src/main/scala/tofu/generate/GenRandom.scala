@@ -9,9 +9,11 @@ import scala.annotation.nowarn
 import scala.util.Random
 import tofu.Delay
 import cats.Functor
+import scala.annotation.implicitNotFound
 
+@implicitNotFound("Could not find an instance of GenRandom for ${F}")
 @typeclass @nowarn("cat=unused-imports")
-trait GenRandom[F[_]] {
+trait GenRandom[F[_]] extends Serializable {
 
   /** generate random 8-bit number */
   def nextLong: F[Long]
@@ -47,4 +49,44 @@ object GenRandom {
   }
 
   implicit val genRandomRepresentableK: RepresentableK[GenRandom] = higherKind.derived.genRepresentableK[GenRandom]
+
+  /* ======================================================================== */
+  /* THE FOLLOWING CODE IS MANAGED BY SIMULACRUM; PLEASE DO NOT EDIT!!!!      */
+  /* ======================================================================== */
+
+  /**
+   * Summon an instance of [[GenRandom]] for `F`.
+   */
+  @inline def apply[F[_]](implicit instance: GenRandom[F]): GenRandom[F] = instance
+
+  object ops {
+    implicit def toAllGenRandomOps[F[_], A](target: F[A])(implicit tc: GenRandom[F]): AllOps[F, A] {
+      type TypeClassType = GenRandom[F]
+    } = new AllOps[F, A] {
+      type TypeClassType = GenRandom[F]
+      val self: F[A] = target
+      val typeClassInstance: TypeClassType = tc
+    }
+  }
+  trait Ops[F[_], A] extends Serializable {
+    type TypeClassType <: GenRandom[F]
+    def self: F[A]
+    val typeClassInstance: TypeClassType
+  }
+  trait AllOps[F[_], A] extends Ops[F, A]
+  trait ToGenRandomOps extends Serializable {
+    implicit def toGenRandomOps[F[_], A](target: F[A])(implicit tc: GenRandom[F]): Ops[F, A] {
+      type TypeClassType = GenRandom[F]
+    } = new Ops[F, A] {
+      type TypeClassType = GenRandom[F]
+      val self: F[A] = target
+      val typeClassInstance: TypeClassType = tc
+    }
+  }
+  object nonInheritedOps extends ToGenRandomOps
+
+  /* ======================================================================== */
+  /* END OF SIMULACRUM-MANAGED CODE                                           */
+  /* ======================================================================== */
+
 }

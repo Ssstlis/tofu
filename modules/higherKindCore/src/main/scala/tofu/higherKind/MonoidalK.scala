@@ -11,7 +11,7 @@ import scala.annotation.nowarn
   * @tparam U
   *   - higher order functor
   */
-@typeclass @nowarn("cat=unused-imports")
+//@typeclass @nowarn("cat=unused-imports")
 trait MonoidalK[U[_[_]]] extends PureK[U] with ApplyK[U] {
   def zipWith2K[F[_], G[_], H[_]](af: U[F], ag: U[G])(f2: Function2K[F, G, H]): U[H]
 

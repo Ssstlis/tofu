@@ -9,10 +9,12 @@ import cats.effect.syntax.concurrent._
 import cats.effect.syntax.bracket._
 
 import scala.annotation.nowarn
+import scala.annotation.implicitNotFound
 
 /** WARNING breaks referential transparency, use with great care */
+@implicitNotFound("Could not find an instance of Memoize for ${F}")
 @typeclass @nowarn("cat=unused-imports")
-trait Memoize[F[_]] {
+trait Memoize[F[_]] extends Serializable {
   def memoize[A](fa: F[A]): F[F[A]]
 
   /** should be redefined if F is at least ApplicativeError */
@@ -63,4 +65,46 @@ object Memoize {
         }
       }
     }
+
+  /* ======================================================================== */
+  /* THE FOLLOWING CODE IS MANAGED BY SIMULACRUM; PLEASE DO NOT EDIT!!!!      */
+  /* ======================================================================== */
+
+  /**
+   * Summon an instance of [[Memoize]] for `F`.
+   */
+  @inline def apply[F[_]](implicit instance: Memoize[F]): Memoize[F] = instance
+
+  object ops {
+    implicit def toAllMemoizeOps[F[_], A](target: F[A])(implicit tc: Memoize[F]): AllOps[F, A] {
+      type TypeClassType = Memoize[F]
+    } = new AllOps[F, A] {
+      type TypeClassType = Memoize[F]
+      val self: F[A] = target
+      val typeClassInstance: TypeClassType = tc
+    }
+  }
+  trait Ops[F[_], A] extends Serializable {
+    type TypeClassType <: Memoize[F]
+    def self: F[A]
+    val typeClassInstance: TypeClassType
+    def memoize: F[F[A]] = typeClassInstance.memoize[A](self)
+    def memoizeOnSuccess: F[F[A]] = typeClassInstance.memoizeOnSuccess[A](self)
+  }
+  trait AllOps[F[_], A] extends Ops[F, A]
+  trait ToMemoizeOps extends Serializable {
+    implicit def toMemoizeOps[F[_], A](target: F[A])(implicit tc: Memoize[F]): Ops[F, A] {
+      type TypeClassType = Memoize[F]
+    } = new Ops[F, A] {
+      type TypeClassType = Memoize[F]
+      val self: F[A] = target
+      val typeClassInstance: TypeClassType = tc
+    }
+  }
+  object nonInheritedOps extends ToMemoizeOps
+
+  /* ======================================================================== */
+  /* END OF SIMULACRUM-MANAGED CODE                                           */
+  /* ======================================================================== */
+
 }

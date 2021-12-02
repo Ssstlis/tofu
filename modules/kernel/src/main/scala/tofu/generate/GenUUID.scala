@@ -10,9 +10,11 @@ import tofu.higherKind.RepresentableK
 
 import scala.annotation.nowarn
 import tofu.Delay
+import scala.annotation.implicitNotFound
 
+@implicitNotFound("Could not find an instance of GenUUID for ${F}")
 @typeclass @nowarn("cat=unused-imports")
-trait GenUUID[F[_]] {
+trait GenUUID[F[_]] extends Serializable {
   def randomUUID: F[UUID]
 }
 
@@ -25,4 +27,44 @@ object GenUUID {
   }
 
   implicit val genUUIDRepresentableK: RepresentableK[GenUUID] = higherKind.derived.genRepresentableK[GenUUID]
+
+  /* ======================================================================== */
+  /* THE FOLLOWING CODE IS MANAGED BY SIMULACRUM; PLEASE DO NOT EDIT!!!!      */
+  /* ======================================================================== */
+
+  /**
+   * Summon an instance of [[GenUUID]] for `F`.
+   */
+  @inline def apply[F[_]](implicit instance: GenUUID[F]): GenUUID[F] = instance
+
+  object ops {
+    implicit def toAllGenUUIDOps[F[_], A](target: F[A])(implicit tc: GenUUID[F]): AllOps[F, A] {
+      type TypeClassType = GenUUID[F]
+    } = new AllOps[F, A] {
+      type TypeClassType = GenUUID[F]
+      val self: F[A] = target
+      val typeClassInstance: TypeClassType = tc
+    }
+  }
+  trait Ops[F[_], A] extends Serializable {
+    type TypeClassType <: GenUUID[F]
+    def self: F[A]
+    val typeClassInstance: TypeClassType
+  }
+  trait AllOps[F[_], A] extends Ops[F, A]
+  trait ToGenUUIDOps extends Serializable {
+    implicit def toGenUUIDOps[F[_], A](target: F[A])(implicit tc: GenUUID[F]): Ops[F, A] {
+      type TypeClassType = GenUUID[F]
+    } = new Ops[F, A] {
+      type TypeClassType = GenUUID[F]
+      val self: F[A] = target
+      val typeClassInstance: TypeClassType = tc
+    }
+  }
+  object nonInheritedOps extends ToGenUUIDOps
+
+  /* ======================================================================== */
+  /* END OF SIMULACRUM-MANAGED CODE                                           */
+  /* ======================================================================== */
+
 }

@@ -9,7 +9,7 @@ import scala.annotation.nowarn
   * @tparam U
   *   - higher order functor
   */
-@typeclass @nowarn("cat=unused-imports")
+//@typeclass @nowarn("cat=unused-imports")
 trait UnitalK[U[_[_]]] {
   def unitK: U[UnitK]
 }
@@ -19,7 +19,7 @@ trait UnitalK[U[_[_]]] {
   * @tparam U
   *   - higher order functor
   */
-@typeclass @nowarn("cat=unused-imports")
+//@typeclass @nowarn("cat=unused-imports")
 trait PureK[U[_[_]]] extends UnitalK[U] {
   def pureK[F[_]](p: Point[F]): U[F]
 
